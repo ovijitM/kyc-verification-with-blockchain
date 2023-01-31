@@ -30,9 +30,15 @@ struct nid{
 contract KYC{
 
     mapping(address=>nid) internal details;
+    mapping(uint=>bool) internal usedIds;
+    mapping(address=>bool) internal usedAddresses;
 
     function setdts(string memory _name,uint _id, address _add) public {
+        require(!usedIds[_id], "This ID has already been used");
+        require(!usedAddresses[_add], "This address has already been used");
         details[_add]=nid(sha256(abi.encodePacked(_name)),_id,_add);
+        usedIds[_id] = true;
+        usedAddresses[_add] = true;
     }
     function checkczdts(address _address) public view returns(nid memory){
         return details[_address];
@@ -61,5 +67,3 @@ contract verification{
     return false;
   }
 }
-
-
