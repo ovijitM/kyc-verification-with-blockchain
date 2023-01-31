@@ -19,3 +19,47 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+struct nid{
+        bytes32 name;
+        uint id;
+        address add;
+    }
+contract KYC{
+
+    mapping(address=>nid) internal details;
+
+    function setdts(string memory _name,uint _id, address _add) public {
+        details[_add]=nid(sha256(abi.encodePacked(_name)),_id,_add);
+    }
+    function checkczdts(address _address) public view returns(nid memory){
+        return details[_address];
+    }
+
+    // function checkname(address _add) public virtual view returns(string memory){
+    //     return details[_add].name;
+    // }
+    
+}
+
+contract verification{
+
+    KYC KYCcontract;
+
+    constructor(address _contract) {
+        KYCcontract=KYC(_contract);
+    }
+
+  function submitdts(string memory _name, uint _id, address _add) public  view returns (bool) {
+    nid memory storedDetails = KYCcontract.checkczdts(_add);
+    bytes32 nameHash = sha256(abi.encodePacked(_name));
+    if (storedDetails.id == _id && storedDetails.name == nameHash) {
+        return true;
+    }
+    return false;
+  }
+}
+
+
